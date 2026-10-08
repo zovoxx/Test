@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Slipstream</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Slipstream" />
+    <meta name="application-name" content="Slipstream" />
+    <meta name="theme-color" content="#0b0e18" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
+    <meta name="description" content="Slipstream – an arcade 3D racing game for iPad and desktop browsers. Race AI rivals, drift, boost and chase your ghost." />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png" />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="game-canvas" aria-label="Slipstream game view"></canvas>
+      <div id="vignette"></div>
+      <div id="speedlines"></div>
+      <div id="hud"></div>
+      <div id="touch-layer"></div>
+
+      <div id="ui">
+        <!-- MAIN MENU -->
+        <section class="screen" data-screen="main">
+          <div class="main-layout">
+            <div class="brand">
+              <div class="logo">SLIP<span>STREAM</span></div>
+              <div class="tagline">Arcade racing · drift · boost</div>
+            </div>
+            <nav class="menu-stack">
+              <button class="btn primary big" data-action="mode" data-mode="race"><i class="ico" data-ico="flag"></i>Race</button>
+              <button class="btn big" data-action="mode" data-mode="timetrial"><i class="ico" data-ico="clock"></i>Time Trial</button>
+              <button class="btn big" data-action="mode" data-mode="freeroam"><i class="ico" data-ico="roam"></i>Free Roam</button>
+              <button class="btn big" data-action="garage"><i class="ico" data-ico="car"></i>Garage</button>
+              <div class="row two">
+                <button class="btn" data-action="settings"><i class="ico" data-ico="gear"></i>Settings</button>
+                <button class="btn" data-action="goto" data-target="howto"><i class="ico" data-ico="help"></i>How to Play</button>
+              </div>
+            </nav>
+          </div>
+          <div class="top-right">
+            <button class="icon-btn" data-action="fullscreen" aria-label="Fullscreen"><i class="ico" data-ico="full"></i></button>
+            <div class="coins-pill"><i class="ico" data-ico="coin"></i><span class="coins-val">0</span></div>
+          </div>
+        </section>
+
+        <!-- TRACK SELECT -->
+        <section class="screen" data-screen="tracks">
+          <header class="screen-head">
+            <button class="icon-btn" data-action="back" aria-label="Back"><i class="ico" data-ico="back"></i></button>
+            <h1 class="track-title">Race</h1>
+            <div class="coins-pill"><i class="ico" data-ico="coin"></i><span class="coins-val">0</span></div>
+          </header>
+          <div class="track-list scrollable-x"></div>
+          <div class="options panel">
+            <div class="opt-row laps-row"><span>Laps</span>
+              <div class="seg">
+                <button data-action="opt" data-key="laps" data-value="1" data-type="num">1</button>
+                <button data-action="opt" data-key="laps" data-value="3" data-type="num">3</button>
+                <button data-action="opt" data-key="laps" data-value="5" data-type="num">5</button>
+              </div>
+            </div>
+            <div class="opt-row diff-row"><span>Rivals</span>
+              <div class="seg">
+                <button data-action="opt" data-key="difficulty" data-value="easy">Easy</button>
+                <button data-action="opt" data-key="difficulty" data-value="normal">Normal</button>
+                <button data-action="opt" data-key="difficulty" data-value="hard">Hard</button>
+              </div>
+            </div>
+            <div class="opt-row"><span>Time</span>
+              <div class="seg wrap">
+                <button data-action="opt" data-key="timeOfDay" data-value="default">Track</button>
+                <button data-action="opt" data-key="timeOfDay" data-value="morning">Morning</button>
+                <button data-action="opt" data-key="timeOfDay" data-value="noon">Noon</button>
+                <button data-action="opt" data-key="timeOfDay" data-value="sunset">Sunset</button>
+                <button data-action="opt" data-key="timeOfDay" data-value="night">Night</button>
+                <button data-action="opt" data-key="timeOfDay" data-value="cycle">Cycle</button>
+              </div>
+            </div>
+            <button class="btn primary big start-btn" data-action="start">Start ›</button>
+          </div>
+        </section>
+
+        <!-- FREE ROAM -->
+        <section class="screen" data-screen="freeroam">
+          <header class="screen-head">
+            <button class="icon-btn" data-action="back" aria-label="Back"><i class="ico" data-ico="back"></i></button>
+            <h1>Free Roam</h1>
+            <div class="coins-pill"><i class="ico" data-ico="coin"></i><span class="coins-val">0</span></div>
+          </header>
+          <div class="panel center-panel">
+            <div class="card-art wide" style="background:linear-gradient(135deg,#3577d4 0%,#a7d0f0 50%,#93a75a 51%,#55753a 100%)"></div>
+            <p>An open sandbox with ramps, hills, shipping containers and a drift pad. Collect the floating coins (10 each) and earn bonus coins from drifting.</p>
+            <div class="opt-row"><span>Time</span>
+              <div class="seg wrap">
+                <button data-action="opt" data-key="timeOfDay" data-value="default">Day</button>
+                <button data-action="opt" data-key="timeOfDay" data-value="morning">Morning</button>
+                <button data-action="opt" data-key="timeOfDay" data-value="sunset">Sunset</button>
+                <button data-action="opt" data-key="timeOfDay" data-value="night">Night</button>
+                <button data-action="opt" data-key="timeOfDay" data-value="cycle">Cycle</button>
+              </div>
+            </div>
+            <button class="btn primary big" data-action="start-freeroam">Drive ›</button>
+          </div>
+        </section>
+
+        <!-- GARAGE -->
+        <section class="screen" data-screen="garage">
+          <header class="screen-head">
+            <button class="icon-btn" data-action="back" aria-label="Back"><i class="ico" data-ico="back"></i></button>
+            <h1>Garage</h1>
+            <div class="coins-pill"><i class="ico" data-ico="coin"></i><span class="coins-val">0</span></div>
+          </header>
+          <div class="garage-nav">
+            <button class="icon-btn big" data-action="car-prev" aria-label="Previous car"><i class="ico" data-ico="prev"></i></button>
+            <span class="car-index">1 / 5</span>
+            <button class="icon-btn big" data-action="car-next" aria-label="Next car"><i class="ico" data-ico="next"></i></button>
+          </div>
+          <div class="panel garage-panel scrollable">
+            <h2 class="car-name">Vector GT</h2>
+            <div class="car-tag">Balanced</div>
+            <div class="stats"></div>
+            <div class="color-head"><span>Paint</span><em class="color-name"></em></div>
+            <div class="swatches"></div>
+            <div class="garage-action"></div>
+          </div>
+          <div class="garage-hint">Drag to rotate</div>
+        </section>
+
+        <!-- SETTINGS -->
+        <section class="screen" data-screen="settings">
+          <header class="screen-head">
+            <button class="icon-btn" data-action="back" aria-label="Back"><i class="ico" data-ico="back"></i></button>
+            <h1>Settings</h1>
+            <span></span>
+          </header>
+          <div class="panel settings-panel scrollable"><div class="settings-body"></div></div>
+        </section>
+
+        <!-- HOW TO PLAY -->
+        <section class="screen" data-screen="howto">
+          <header class="screen-head">
+            <button class="icon-btn" data-action="back" aria-label="Back"><i class="ico" data-ico="back"></i></button>
+            <h1>How to Play</h1>
+            <span></span>
+          </header>
+          <div class="panel howto-panel scrollable">
+            <table class="controls-table">
+              <thead><tr><th>Action</th><th>Touch (iPad)</th><th>Keyboard</th><th>Gamepad</th></tr></thead>
+              <tbody>
+                <tr><td>Steer</td><td>Drag the wheel left/right (or arrows / tilt)</td><td>A / D or ← →</td><td>Left stick</td></tr>
+                <tr><td>Accelerate</td><td>GAS pedal (right)</td><td>W or ↑</td><td>RT</td></tr>
+                <tr><td>Brake / reverse</td><td>BRAKE pedal (hold to reverse)</td><td>S or ↓</td><td>LT</td></tr>
+                <tr><td>Handbrake / drift</td><td>DRIFT button</td><td>Space</td><td>A / LB</td></tr>
+                <tr><td>Nitro boost</td><td>N₂O button</td><td>Shift or N</td><td>B / RB</td></tr>
+                <tr><td>Camera</td><td>Camera button</td><td>C</td><td>Y</td></tr>
+                <tr><td>Look behind</td><td>Eye button (hold)</td><td>Q or B</td><td>X (hold)</td></tr>
+                <tr><td>Reset car</td><td>↺ button (top right)</td><td>R</td><td>Back / Select</td></tr>
+                <tr><td>Pause</td><td>❚❚ button (top left)</td><td>P or Esc</td><td>Start</td></tr>
+                <tr><td>Debug overlay</td><td>Tap FPS counter 5×</td><td>F3</td><td>–</td></tr>
+              </tbody>
+            </table>
+            <h3>Tips</h3>
+            <ul class="tips">
+              <li><b>Drift:</b> at speed, tap DRIFT while steering into a corner, then hold the gas and steer to control the slide. Counter-steer to straighten up.</li>
+              <li>Drifting fills your <b>nitro</b> faster and scores points – chain long drifts for up to a <b>×5 multiplier</b>. Hitting a wall loses the combo.</li>
+              <li>Brake <b>before</b> corners; the grip is best when you're straight.</li>
+              <li>Pass every <b>checkpoint</b> in order – shortcuts don't count. A <b>WRONG WAY</b> warning shows if you turn around.</li>
+              <li>Stuck? The car resets to the last checkpoint after 3 seconds, or tap ↺.</li>
+              <li>Earn <b>coins</b> from races, drifting and Free Roam to unlock cars, paint and reverse tracks.</li>
+              <li>Prefer one-handed play? Turn on <b>Auto-accelerate</b> in Settings.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- PAUSE -->
+        <section class="screen" data-screen="pause">
+          <div class="panel pause-panel">
+            <h1>Paused</h1>
+            <button class="btn primary big" data-action="resume">Resume</button>
+            <button class="btn" data-action="restart">Restart</button>
+            <button class="btn" data-action="reset-car">Reset car</button>
+            <button class="btn" data-action="settings">Settings</button>
+            <button class="btn" data-action="quit">Quit to menu</button>
+          </div>
+        </section>
+
+        <!-- RESULTS -->
+        <section class="screen" data-screen="results">
+          <div class="panel results-panel scrollable">
+            <h1 class="res-title">Victory!</h1>
+            <div class="res-sub"></div>
+            <div class="podium"></div>
+            <div class="res-cols">
+              <div class="standings"></div>
+              <div>
+                <div class="res-stats"></div>
+                <div class="res-coins"></div>
+              </div>
+            </div>
+            <div class="row res-buttons">
+              <button class="btn" data-action="quit">Menu</button>
+              <button class="btn" data-action="next-track">Next track</button>
+              <button class="btn primary" data-action="restart">Race again</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div id="fade"></div>
+
+      <div id="start-screen" class="overlay">
+        <div class="logo big">SLIP<span>STREAM</span></div>
+        <button id="start-btn" class="tap-start" aria-label="Tap to start">Tap to start</button>
+        <div class="start-hint">Best in landscape · Add to Home Screen for fullscreen</div>
+      </div>
+
+      <div id="loading" class="overlay on">
+        <div class="logo">SLIP<span>STREAM</span></div>
+        <div class="load-bar"><div class="load-fill"></div></div>
+        <div class="load-text">Loading…</div>
+      </div>
+
+      <div id="rotate" class="overlay">
+        <div class="rotate-icon"></div>
+        <h2>Please rotate your device</h2>
+        <p>Slipstream is played in landscape.</p>
+      </div>
+
+      <div id="fatal" class="overlay">
+        <h2>Oops</h2>
+        <p class="fatal-msg"></p>
+        <button class="btn primary" id="fatal-reload">Reload</button>
+      </div>
+
+      <div id="toast" role="status" aria-live="polite"></div>
+      <div id="confirm" class="overlay"></div>
+    </div>
+    <noscript><p style="color:#fff;font-family:system-ui;padding:2rem">Slipstream needs JavaScript enabled.</p></noscript>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

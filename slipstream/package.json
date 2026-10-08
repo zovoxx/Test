@@ -1,0 +1,24 @@
+{
+  "name": "slipstream",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Slipstream - an arcade 3D driving game for iPad Safari and desktop browsers, built with Three.js.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "dev:https": "vite --host --mode https",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "serve": "vite build && vite preview --host",
+    "icons": "node scripts/generate-icons.mjs",
+    "check:tracks": "node scripts/check-tracks.mjs",
+    "test:physics": "node scripts/sim-physics.mjs"
+  },
+  "dependencies": {
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
+    "vite": "^8.3.2"
+  }
+}
