@@ -135,9 +135,10 @@ export function setSetting(key, value) {
 }
 
 export function resetProgress() {
-  const settings = { ...loadSave().settings };
+  // keep the very same settings object: other modules hold references to it
+  const settings = loadSave().settings;
   memory = DEFAULT_SAVE();
-  memory.settings = settings; // keep the player's settings
+  memory.settings = settings;
   save(true);
   return memory;
 }

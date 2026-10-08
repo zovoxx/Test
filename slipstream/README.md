@@ -204,6 +204,7 @@ Other useful knobs:
 - Automated testing used headless **Chromium** with an iPad viewport and touch emulation, because WebKit was not available in the build environment. The code avoids APIs Safari lacks and feature-checks the optional ones (audio session, vibration, stereo panner, fullscreen, orientation lock).
 - iOS ignores the manifest's landscape lock in Safari, so the game shows a "rotate your device" overlay in portrait instead.
 - The iPad ringer switch can mute Web Audio on iPadOS versions before 16.4 (the game sets `navigator.audioSession.type = 'playback'` where supported).
+- Anti-aliasing (MSAA) is chosen when the game starts: on for High/Medium, off for Low. Changing the Quality setting applies pixel ratio, shadows and particles immediately, while anti-aliasing and terrain/tree density take effect after a reload or on the next track load.
 - Cars are low-poly procedural models and the physics is deliberately arcade-style (no real suspension simulation or roll-overs). Free-roam ramps can send you flying, but cars always land on their wheels.
 - AI rivals use the same physics as you with a small grip assist and rubber-banding. They overtake and avoid each other but occasionally bump.
 - Ghosts are stored per track (one best ghost each). Very long laps (over 4 minutes) are not recorded.
