@@ -23,7 +23,9 @@ mkdirSync(OUT, { recursive: true });
 const URL = process.env.URL || 'http://localhost:4173/?test';
 const engine = (process.env.BROWSER || 'webkit') === 'chromium' ? chromium : webkit;
 
-const browser = await engine.launch({ executablePath: process.env.BROWSER_PATH || undefined });
+// BROWSER_ARGS: extra flags, e.g. "--use-angle=swiftshader --enable-unsafe-swiftshader" on GPU-less CI
+const args = (process.env.BROWSER_ARGS || '').split(' ').filter(Boolean);
+const browser = await engine.launch({ executablePath: process.env.BROWSER_PATH || undefined, args });
 const ctx = await browser.newContext({ ...devices['iPad Pro 11 landscape'], deviceScaleFactor: Number(process.env.DPR || 1) });
 await ctx.addInitScript(() => {
   try {

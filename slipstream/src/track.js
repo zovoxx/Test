@@ -27,7 +27,11 @@ export class TrackPath {
     this.wallOffset = this.halfWidth + this.runoff; // lateral position of walls
 
     const pts = def.points.map(([x, z, y = 0]) => new THREE.Vector3(x, y, z));
-    if (def.reverse) pts.reverse();
+    if (def.reverse) {
+      // drive the loop the other way but keep the same start/finish point
+      pts.reverse();
+      pts.unshift(pts.pop());
+    }
     const curve = new THREE.CatmullRomCurve3(pts, true, 'centripetal', 0.5);
     curve.arcLengthDivisions = Math.max(400, pts.length * 60);
     this.length = curve.getLength();

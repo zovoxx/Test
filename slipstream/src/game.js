@@ -760,7 +760,7 @@ export class Game {
   }
 
   pause() {
-    if (!this._inSession() || this.paused) return;
+    if (!this._inSession() || this.paused || this.session.resultsShown) return;
     this.paused = true;
     this.input.setEnabled(false);
     this.audio.setDriving(false);

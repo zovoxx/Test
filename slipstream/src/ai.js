@@ -12,8 +12,8 @@ const G = 9.81;
 // skill scales cornering speed; rubber bands scale speed when far ahead/behind
 // the player; gridSlot is where the player starts (0 = pole).
 export const DIFFICULTY = {
-  easy: { skill: 0.8, rubberUp: 1.04, rubberDown: 0.8, gridSlot: 2 },
-  normal: { skill: 0.885, rubberUp: 1.08, rubberDown: 0.86, gridSlot: 3 },
+  easy: { skill: 0.76, rubberUp: 1.03, rubberDown: 0.78, gridSlot: 2 },
+  normal: { skill: 0.87, rubberUp: 1.06, rubberDown: 0.85, gridSlot: 3 },
   hard: { skill: 0.97, rubberUp: 1.13, rubberDown: 0.94, gridSlot: 5 },
 };
 
