@@ -343,7 +343,17 @@ svg {
   z-index: 30;
 }
 #ui.has-screen {
+  pointer-events: none; /* the active screen enables its own pointer events */
+}
+/* garage: empty space passes touches to the 3D view (drag to rotate the car) */
+.screen.active[data-screen='garage'] {
+  pointer-events: none;
+}
+.screen.active[data-screen='garage'] > * {
   pointer-events: auto;
+}
+.screen.active[data-screen='garage'] > .garage-hint {
+  pointer-events: none;
 }
 .screen {
   position: absolute;
@@ -355,10 +365,12 @@ svg {
   transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
   display: flex;
   flex-direction: column;
+  pointer-events: none; /* a screen that is fading out must not catch taps */
 }
 .screen.active {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
   transform: none;
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
@@ -1991,4 +2003,10 @@ input[type='range']::-moz-range-thumb {
   .tap-start {
     animation: none;
   }
+}
+
+/* settings / how-to headers line up with their centred panels */
+.screen[data-screen='settings'] .screen-head,
+.screen[data-screen='howto'] .screen-head {
+  width: min(780px, 100%);
 }

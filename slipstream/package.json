@@ -12,7 +12,10 @@
     "serve": "vite build && vite preview --host",
     "icons": "node scripts/generate-icons.mjs",
     "check:tracks": "node scripts/check-tracks.mjs",
-    "test:physics": "node scripts/sim-physics.mjs"
+    "test:physics": "node scripts/sim-physics.mjs",
+    "test:ai": "node scripts/sim-race.mjs",
+    "test": "npm run check:tracks && npm run test:physics && npm run test:ai",
+    "test:e2e": "node tests/e2e.mjs"
   },
   "dependencies": {
     "three": "^0.186.1"

@@ -34,6 +34,16 @@ const _e = new THREE.Euler(0, 0, 0, 'YXZ');
 const _s = new THREE.Vector3(1, 1, 1);
 const _proj = {};
 const NO_INPUT = { steer: 0, throttle: 0, brake: 0, handbrake: false, boost: false };
+const DUST_COLORS = { coastal: [0.55, 0.48, 0.36], canyon: [0.78, 0.6, 0.42], city: [0.6, 0.6, 0.62], freeroam: [0.58, 0.5, 0.38] };
+
+function comparePositions(a, b) {
+  const ra = a.race;
+  const rb = b.race;
+  if (ra.finished && rb.finished) return ra.finishTime - rb.finishTime;
+  if (ra.finished) return -1;
+  if (rb.finished) return 1;
+  return rb.dist - ra.dist;
+}
 
 export class Game {
   constructor(dom) {
@@ -84,7 +94,7 @@ export class Game {
     });
 
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.1, 2600);
+    this.camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.1, 3400);
     this.scene.add(this.camera);
     this.rig = new CameraRig(this.camera);
     onProgress(0.08, 'Preparing renderer');
@@ -621,10 +631,12 @@ export class Game {
     const path = this.path;
     // place cars
     const p = new THREE.Vector3();
+    const playerSlot = Math.min(s.cars.length - 1, s.diff.gridSlot ?? s.cars.length - 1);
     s.cars.forEach((car, i) => {
       let yaw;
       if (s.mode === 'race') {
-        const slot = i === 0 ? s.cars.length - 1 : i - 1; // player starts at the back
+        // player slot depends on difficulty; AI fill the remaining slots in order
+        const slot = i === 0 ? playerSlot : i - 1 < playerSlot ? i - 1 : i;
         yaw = path.gridSlot(slot, p).heading;
       } else if (s.mode === 'timetrial') {
         path.pointAt(path.length - 60, 0, p);
@@ -1064,16 +1076,14 @@ export class Game {
     this.input.setEnabled(false);
   }
 
+  /** Cars ordered by race position (reuses one array; no per-frame garbage). */
   _positions() {
     const s = this.session;
-    return s.cars.slice().sort((a, b) => {
-      const ra = a.race;
-      const rb = b.race;
-      if (ra.finished && rb.finished) return ra.finishTime - rb.finishTime;
-      if (ra.finished) return -1;
-      if (rb.finished) return 1;
-      return rb.dist - ra.dist;
-    });
+    const order = this._order || (this._order = []);
+    order.length = 0;
+    for (const c of s.cars) order.push(c);
+    order.sort(comparePositions);
+    return order;
   }
 
   _showResults() {
@@ -1163,7 +1173,8 @@ export class Game {
     const d = s.drift;
     const ph = s.player.physics;
     if (this.state !== 'racing') return;
-    const drifting = ph.drifting && ph.grounded && ph.speed > 9 && Math.abs(ph.slipAngle) > 0.15 && !ph.ground.offroad;
+    // on tracks only drifts on tarmac count; free roam is a sandbox
+    const drifting = ph.drifting && ph.grounded && ph.speed > 9 && Math.abs(ph.slipAngle) > 0.15 && (!this.path || !ph.ground.offroad);
     if (ph.impact > 6 && d.active) {
       d.active = false;
       d.score = 0;
@@ -1331,6 +1342,12 @@ export class Game {
     for (const car of cars) {
       if (car.isGhost || !car.root.visible) continue;
       const root = car.root;
+      // faint self-illumination at night so cars read against dark scenery
+      const glow = Math.round(lightK * 20) / 100;
+      if (car._nightGlow !== glow) {
+        car._nightGlow = glow;
+        car.view.paintMat.emissive.setHex(car.colorDef.hex).multiplyScalar(glow);
+      }
       // blob shadow follows the ground under the car
       _e.set(root.rotation.x, root.rotation.y, root.rotation.z, 'YXZ');
       _q.setFromEuler(_e);
@@ -1403,9 +1420,9 @@ export class Game {
       }
       if (ph.grounded && off && ph.speed > 4) {
         const amt = clamp(ph.speed / 30, 0.15, 1) * 0.7 * rate;
-        const col = this.envDef.theme === 'canyon' ? [0.78, 0.6, 0.42] : this.envDef.theme === 'city' ? [0.6, 0.6, 0.62] : [0.55, 0.48, 0.36];
-        fx.dust(rlx, y, rlz, ph.vel.x, ph.vel.z, amt, ...col);
-        fx.dust(rrx, y, rrz, ph.vel.x, ph.vel.z, amt, ...col);
+        const col = DUST_COLORS[this.envDef.theme] || DUST_COLORS.coastal;
+        fx.dust(rlx, y, rlz, ph.vel.x, ph.vel.z, amt, col[0], col[1], col[2]);
+        fx.dust(rrx, y, rrz, ph.vel.x, ph.vel.z, amt, col[0], col[1], col[2]);
       }
       // skid marks
       let sk = this._skidState.get(car);
@@ -1508,15 +1525,15 @@ export class Game {
       const order = this.state === 'countdown' ? null : this._positions();
       const lapTime = r.started || s.mode === 'race' ? (r.finished ? r.lapTimes[r.lapTimes.length - 1] : s.raceTime - r.lapStart) : 0;
       const best = s.mode === 'timetrial' ? (s.bestGhost ? s.bestGhost.lapMs / 1000 : null) : r.bestLap;
-      this.hud.updateRace({
-        position: order ? order.indexOf(p) + 1 : s.cars.length,
-        cars: s.cars.length,
-        lap: Math.max(1, Math.min(r.lap, s.laps)),
-        laps: s.laps,
-        lapTime: (lapTime || 0) * 1000,
-        bestLap: best != null ? best * 1000 : null,
-        lastLap: r.lapTimes.length ? r.lapTimes[r.lapTimes.length - 1] * 1000 : null,
-      });
+      const info = this._hudInfo || (this._hudInfo = {});
+      info.position = order ? order.indexOf(p) + 1 : s.cars.length;
+      info.cars = s.cars.length;
+      info.lap = Math.max(1, Math.min(r.lap, s.laps));
+      info.laps = s.laps;
+      info.lapTime = (lapTime || 0) * 1000;
+      info.bestLap = best != null ? best * 1000 : null;
+      info.lastLap = r.lapTimes.length ? r.lapTimes[r.lapTimes.length - 1] * 1000 : null;
+      this.hud.updateRace(info);
       this.hud.wrongWay(this._wrongShown && this.state === 'racing');
     }
     this.hud.drift(s.drift.active && s.drift.score > 30, Math.round(s.drift.score), s.drift.mult);
@@ -1524,15 +1541,30 @@ export class Game {
     this._mapTimer = (this._mapTimer || 0) + dt;
     if (this._mapTimer > 0.033) {
       this._mapTimer = 0;
+      // pooled dot objects so the minimap creates no garbage
+      const pool = this._dotPool || (this._dotPool = []);
       const dots = this._mapDots || (this._mapDots = []);
       dots.length = 0;
+      const add = (x, z, color, size) => {
+        const d = pool[dots.length] || (pool[dots.length] = { x: 0, z: 0, color: '', size: 3 });
+        d.x = x;
+        d.z = z;
+        d.color = color;
+        d.size = size;
+        dots.push(d);
+      };
       for (const c of s.cars) {
         if (c === p) continue;
-        dots.push({ x: c.root.position.x, z: c.root.position.z, color: '#' + c.colorDef.hex.toString(16).padStart(6, '0'), size: 3.4 });
+        if (!c.colorCss) c.colorCss = '#' + c.colorDef.hex.toString(16).padStart(6, '0');
+        add(c.root.position.x, c.root.position.z, c.colorCss, 3.4);
       }
-      if (s.ghostCar && s.ghostCar.root.visible) dots.push({ x: s.ghostCar.root.position.x, z: s.ghostCar.root.position.z, color: 'rgba(111,227,255,0.8)', size: 3 });
-      if (this.props) for (const c of this.props.coins) if (!c.taken) dots.push({ x: c.x, z: c.z, color: '#ffc533', size: 2 });
-      this.hud.drawMinimap(dots, { x: p.root.position.x, z: p.root.position.z, yaw: p.root.rotation.y });
+      if (s.ghostCar && s.ghostCar.root.visible) add(s.ghostCar.root.position.x, s.ghostCar.root.position.z, 'rgba(111,227,255,0.8)', 3);
+      if (this.props) for (const c of this.props.coins) if (!c.taken) add(c.x, c.z, '#ffc533', 2);
+      const me = this._mapPlayer || (this._mapPlayer = { x: 0, z: 0, yaw: 0 });
+      me.x = p.root.position.x;
+      me.z = p.root.position.z;
+      me.yaw = p.root.rotation.y;
+      this.hud.drawMinimap(dots, me);
     }
     // speed lines & vignette
     const k = smoothstep(42, 85, ph.speed) * 0.55 + (ph.boosting ? 0.45 : 0);
@@ -1663,6 +1695,8 @@ export class Game {
       raceTime: ready ? s.raceTime : 0,
       aiDist: ready ? s.ais.map((a) => Math.round(a.car.race.dist)) : [],
       finished: ready ? !!s.resultsShown : false,
+      ghostVisible: !!(s && s.ghostCar && s.ghostCar.root.visible),
+      savedGhosts: Object.keys(this.save.ghosts || {}),
       drawCalls: this.renderer.info.render.calls,
       triangles: this.renderer.info.render.triangles,
       fps: this.quality.fps,

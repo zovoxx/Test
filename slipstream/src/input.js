@@ -25,6 +25,13 @@ const ACTION_KEYS = { KeyC: 'camera', KeyR: 'reset', KeyP: 'pause', Escape: 'pau
 
 const GP_DEADZONE = 0.14;
 
+function shapeSteer(v, sensitivity) {
+  const a = Math.abs(v);
+  if (a < 0.05) return 0;
+  const n = (a - 0.05) / 0.95;
+  return Math.sign(v) * clamp(Math.pow(n, 1.2) * sensitivity, 0, 1);
+}
+
 export class Input {
   /**
    * @param {HTMLElement} container element that receives the touch controls
@@ -435,16 +442,12 @@ export class Input {
       this.tilt.steer += (clamp(v, -1, 1) - this.tilt.steer) * damp(14, dt);
       touchSteer = this.tilt.steer;
     }
-    // dead zone + response curve + sensitivity
-    const shape = (v) => {
-      const a = Math.abs(v);
-      if (a < 0.05) return 0;
-      const n = (a - 0.05) / 0.95;
-      return Math.sign(v) * clamp(Math.pow(n, 1.2) * (s.steerSensitivity || 1), 0, 1);
-    };
-    const candidates = [shape(touchSteer), this.keySteer, shape(this.gamepad.steer)];
-    let steer = 0;
-    for (const c of candidates) if (Math.abs(c) > Math.abs(steer)) steer = c;
+    // dead zone + response curve + sensitivity; the strongest source wins
+    const sens = s.steerSensitivity || 1;
+    let steer = shapeSteer(touchSteer, sens);
+    if (Math.abs(this.keySteer) > Math.abs(steer)) steer = this.keySteer;
+    const gps = shapeSteer(this.gamepad.steer, sens);
+    if (Math.abs(gps) > Math.abs(steer)) steer = gps;
     st.steer = clamp(steer, -1, 1);
 
     const kb = k.has('down') ? 1 : 0;

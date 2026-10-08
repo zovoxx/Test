@@ -34,9 +34,11 @@ Other scripts:
 | Script | What it does |
 | --- | --- |
 | `npm run dev:https` | Dev server with a self-signed HTTPS certificate (needed on iPad for **tilt steering** and the offline service worker over the LAN). Accept the certificate warning once. |
+| `npm test` | Runs the three headless checks below (no browser needed). |
 | `npm run check:tracks` | Validates every track: corner radius, section spacing, slope. |
-| `npm run test:physics` | Headless handling tests: 0–100, top speed, braking, cornering, drifting, jumps, no wall tunnelling. |
-| `node scripts/sim-race.mjs` | Headless AI race (6 cars, 2 laps) on every track and direction. |
+| `npm run test:physics` | Handling tests: 0–100, top speed, braking, cornering, drifting, reverse, jumps, no wall tunnelling. |
+| `npm run test:ai` | Headless AI race (6 cars, 2 laps) on every track and direction. |
+| `npm run test:e2e` | Optional browser test with an emulated iPad (touch, landscape) – see `tests/e2e.mjs` for setup (needs Playwright). |
 | `npm run icons` | Regenerates the app icons (pure Node, no image tools). |
 
 ---
@@ -121,6 +123,7 @@ slipstream/
 ├── index.html              # all screens/overlays + iOS/PWA meta tags
 ├── public/                 # manifest, service worker, generated icons
 ├── scripts/                # icon generator, track checker, physics & AI sims
+├── tests/e2e.mjs           # optional Playwright end-to-end test (iPad emulation)
 └── src/
     ├── main.js             # boot, WebGL check, gesture blocking, tap-to-start, SW
     ├── game.js             # renderer, fixed-timestep loop, modes, laps, effects wiring

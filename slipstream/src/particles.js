@@ -268,7 +268,7 @@ export class SkidMarks {
     const idx = new Uint16Array(maxSegments * 6);
     for (let s = 0; s < maxSegments; s++) {
       const v = s * 4;
-      idx.set([v, v + 2, v + 1, v + 1, v + 2, v + 3], s * 6);
+      idx.set([v, v + 1, v + 2, v + 1, v + 3, v + 2], s * 6); // counter-clockwise from above
       uv.set([0, 0, 1, 0, 0, 1, 1, 1], s * 8);
     }
     const g = new THREE.BufferGeometry();

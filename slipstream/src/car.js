@@ -1025,6 +1025,7 @@ export class Car {
 
   setColor(colorDef) {
     this.colorDef = colorDef;
+    this._nightGlow = -1;
     if (this.isGhost) return;
     const fin = FINISH[colorDef.finish] || FINISH.gloss;
     this.view.paintMat.color.setHex(colorDef.hex);

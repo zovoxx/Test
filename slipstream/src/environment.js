@@ -32,10 +32,10 @@ export const THEMES = {
     road: { base: '#44474d', edge: '#f2f2f2', center: '#f2f2f2' },
     rail: 'steel',
     blend: 48,
-    fog: [320, 1900],
+    fog: [350, 2600],
     lampSpacing: 70,
     lampColor: [1, 0.85, 0.6],
-    mountains: { color0: '#4c6b4a', color1: '#8aa3a8', snow: true, height: 260 },
+    mountains: { color0: '#3b5a3e', color1: '#76909a', snow: true, height: 260 },
     clouds: 0.8,
   },
   city: {
@@ -59,7 +59,7 @@ export const THEMES = {
     road: { base: '#4a4542', edge: '#f2f2f2', center: '#ffd23a' },
     rail: 'steel',
     blend: 70,
-    fog: [320, 1900],
+    fog: [350, 2500],
     lampSpacing: 64,
     lampColor: [1, 0.8, 0.55],
     mountains: { color0: '#8a4a2c', color1: '#d0895a', snow: false, height: 200, mesa: true },
@@ -68,7 +68,7 @@ export const THEMES = {
   freeroam: {
     ground: { dark: '#55753a', light: '#93a75a', speck: '#b4b07a', period: 5 },
     rail: 'concrete',
-    fog: [320, 1800],
+    fog: [350, 2500],
     lampColor: [1, 0.85, 0.6],
     mountains: { color0: '#566f4c', color1: '#9aa9a8', snow: true, height: 240 },
     clouds: 0.7,
@@ -79,16 +79,16 @@ export const THEMES = {
 // Time of day keyframes (hour -> colours / intensities). Colours are hex.
 // ---------------------------------------------------------------------------
 const TOD_KEYS = [
-  { h: 0, top: '#03060f', hor: '#141c33', bottom: '#07090f', sun: '#9fb4e8', sunI: 0.42, hemiS: '#2c3d6e', hemiG: '#0b0c12', hemiI: 0.45, fog: '#141c33', env: 0.25, night: 1, cloud: '#1b2238' },
-  { h: 5.2, top: '#0b1430', hor: '#3a3354', bottom: '#0b0c12', sun: '#9fb4e8', sunI: 0.38, hemiS: '#3a4673', hemiG: '#14121a', hemiI: 0.5, fog: '#3a3354', env: 0.3, night: 0.9, cloud: '#2e2c45' },
+  { h: 0, top: '#03060f', hor: '#141c33', bottom: '#07090f', sun: '#a9bdf0', sunI: 0.7, hemiS: '#45598f', hemiG: '#181a24', hemiI: 0.95, fog: '#141c33', env: 0.25, night: 1, cloud: '#1b2238' },
+  { h: 5.2, top: '#0b1430', hor: '#3a3354', bottom: '#0b0c12', sun: '#9fb4e8', sunI: 0.5, hemiS: '#45528a', hemiG: '#18161f', hemiI: 0.8, fog: '#3a3354', env: 0.3, night: 0.9, cloud: '#2e2c45' },
   { h: 6.4, top: '#2c4a8a', hor: '#f0a070', bottom: '#2a2420', sun: '#ffab72', sunI: 1.3, hemiS: '#8aa3d6', hemiG: '#3a2f28', hemiI: 0.8, fog: '#d79b7c', env: 0.6, night: 0.25, cloud: '#f2b394' },
   { h: 8.5, top: '#3577d4', hor: '#bcd6ee', bottom: '#4a4a44', sun: '#ffe7c4', sunI: 2.6, hemiS: '#bcd6ff', hemiG: '#5a4e3c', hemiI: 1.05, fog: '#bfd5ea', env: 0.9, night: 0, cloud: '#ffffff' },
   { h: 13, top: '#2a6fd6', hor: '#b5d4f2', bottom: '#4d4b45', sun: '#fff6e8', sunI: 3.1, hemiS: '#c4dcff', hemiG: '#5d5240', hemiI: 1.15, fog: '#bcd6f0', env: 1, night: 0, cloud: '#ffffff' },
   { h: 16.5, top: '#3570c8', hor: '#d8cfb4', bottom: '#4d473f', sun: '#ffdcaa', sunI: 2.6, hemiS: '#b8cdf0', hemiG: '#5d4c3a', hemiI: 1.0, fog: '#d3cdb8', env: 0.9, night: 0, cloud: '#fff4e6' },
   { h: 18.2, top: '#3a4f96', hor: '#ff9a4d', bottom: '#3a2a22', sun: '#ff9248', sunI: 2.1, hemiS: '#a08cc0', hemiG: '#4a3426', hemiI: 0.85, fog: '#e8915a', env: 0.75, night: 0.08, cloud: '#ffb070' },
   { h: 19.4, top: '#1a1f4f', hor: '#b2486a', bottom: '#1a1418', sun: '#ff6a4a', sunI: 0.8, hemiS: '#5a4a80', hemiG: '#1e1418', hemiI: 0.55, fog: '#6a3550', env: 0.45, night: 0.6, cloud: '#7a3a5a' },
-  { h: 20.6, top: '#060a1c', hor: '#202848', bottom: '#08090f', sun: '#9fb4e8', sunI: 0.42, hemiS: '#2c3d6e', hemiG: '#0b0c12', hemiI: 0.45, fog: '#1c2440', env: 0.25, night: 1, cloud: '#1b2238' },
-  { h: 24, top: '#03060f', hor: '#141c33', bottom: '#07090f', sun: '#9fb4e8', sunI: 0.42, hemiS: '#2c3d6e', hemiG: '#0b0c12', hemiI: 0.45, fog: '#141c33', env: 0.25, night: 1, cloud: '#1b2238' },
+  { h: 20.6, top: '#060a1c', hor: '#202848', bottom: '#08090f', sun: '#a9bdf0', sunI: 0.7, hemiS: '#45598f', hemiG: '#181a24', hemiI: 0.95, fog: '#1c2440', env: 0.25, night: 1, cloud: '#1b2238' },
+  { h: 24, top: '#03060f', hor: '#141c33', bottom: '#07090f', sun: '#a9bdf0', sunI: 0.7, hemiS: '#45598f', hemiG: '#181a24', hemiI: 0.95, fog: '#141c33', env: 0.25, night: 1, cloud: '#1b2238' },
 ];
 
 export const TIME_PRESETS = { morning: 7.2, noon: 13, sunset: 18.3, night: 23 };
@@ -153,7 +153,7 @@ const SKY_FS = /* glsl */ `
     col = mix(col, uBottom, smoothstep(0.0, -0.18, h));
     // sun disc + halo
     float sd = max(dot(d, uSunDir), 0.0);
-    col += uSunColor * (smoothstep(0.9993, 0.9997, sd) * 6.0 + pow(sd, 18.0) * 0.35 + pow(sd, 4.0) * 0.12) * uSunVis;
+    col += uSunColor * (smoothstep(0.99962, 0.99985, sd) * 1.8 + pow(sd, 22.0) * 0.4 + pow(sd, 4.0) * 0.12) * uSunVis;
     // moon
     float md = max(dot(d, uMoonDir), 0.0);
     col += vec3(0.85, 0.9, 1.0) * (smoothstep(0.9990, 0.9994, md) * 1.6 + pow(md, 60.0) * 0.12) * uMoonVis;

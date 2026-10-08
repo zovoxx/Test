@@ -371,7 +371,7 @@ export class UI {
     const colorDef = COLORS.find((c) => c.id === current);
     el.querySelector('.color-name').textContent = colorDef ? colorDef.name : '';
     const action = el.querySelector('.garage-action');
-    if (!owned) action.innerHTML = `<button class="btn primary" data-action="car-buy">${ICON.lock} Unlock · ${formatNumber(car.price)} coins</button>`;
+    if (!owned) action.innerHTML = `<button class="btn primary" data-action="car-buy"><i class="ico">${ICON.lock}</i> Unlock · ${formatNumber(car.price)} coins</button>`;
     else if (s.selectedCar === car.id) action.innerHTML = `<button class="btn primary disabled">✓ Selected</button>`;
     else action.innerHTML = `<button class="btn primary" data-action="car-select">Select car</button>`;
     this.updateCoins();

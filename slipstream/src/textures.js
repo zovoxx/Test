@@ -278,7 +278,7 @@ export function glowTexture() {
   });
 }
 
-/** Puffy smoke particle. */
+/** Puffy smoke particle (alpha falls to zero well inside the edges). */
 export function smokeTexture() {
   return cached('smoke', () => {
     const s = 64;
@@ -286,17 +286,28 @@ export function smokeTexture() {
     const ctx = c.getContext('2d');
     const rng = makeRng(77);
     for (let i = 0; i < 14; i++) {
-      const x = s / 2 + (rng() - 0.5) * s * 0.4;
-      const y = s / 2 + (rng() - 0.5) * s * 0.4;
-      const r = s * (0.18 + rng() * 0.18);
+      const x = s / 2 + (rng() - 0.5) * s * 0.22;
+      const y = s / 2 + (rng() - 0.5) * s * 0.22;
+      const r = s * (0.14 + rng() * 0.12);
       const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-      g.addColorStop(0, 'rgba(255,255,255,0.35)');
+      g.addColorStop(0, 'rgba(255,255,255,0.4)');
       g.addColorStop(1, 'rgba(255,255,255,0)');
       ctx.fillStyle = g;
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
       ctx.fill();
     }
+    // radial mask guarantees soft round edges
+    ctx.globalCompositeOperation = 'destination-in';
+    const m = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+    m.addColorStop(0, 'rgba(0,0,0,1)');
+    m.addColorStop(0.3, 'rgba(0,0,0,0.8)');
+    m.addColorStop(0.55, 'rgba(0,0,0,0.38)');
+    m.addColorStop(0.8, 'rgba(0,0,0,0.1)');
+    m.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = m;
+    ctx.fillRect(0, 0, s, s);
+    ctx.globalCompositeOperation = 'source-over';
     return toTexture(c, { repeat: false, srgb: false });
   });
 }

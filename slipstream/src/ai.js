@@ -9,10 +9,12 @@ import { clamp, smoothstep, lerp } from './utils.js';
 
 const G = 9.81;
 
+// skill scales cornering speed; rubber bands scale speed when far ahead/behind
+// the player; gridSlot is where the player starts (0 = pole).
 export const DIFFICULTY = {
-  easy: { skill: 0.84, rubberUp: 1.06, rubberDown: 0.84 },
-  normal: { skill: 0.92, rubberUp: 1.1, rubberDown: 0.9 },
-  hard: { skill: 0.985, rubberUp: 1.14, rubberDown: 0.95 },
+  easy: { skill: 0.8, rubberUp: 1.04, rubberDown: 0.8, gridSlot: 2 },
+  normal: { skill: 0.885, rubberUp: 1.08, rubberDown: 0.86, gridSlot: 3 },
+  hard: { skill: 0.97, rubberUp: 1.13, rubberDown: 0.94, gridSlot: 5 },
 };
 
 const _p = { x: 0, y: 0, z: 0, set(x, y, z) { this.x = x; this.y = y; this.z = z; return this; } };
