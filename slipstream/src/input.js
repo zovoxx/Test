@@ -42,7 +42,7 @@ export class Input {
     this.container = container;
     this.state = { steer: 0, throttle: 0, brake: 0, handbrake: false, boost: false, lookBehind: false };
     this.keys = new Set();
-    this.actions = new Set();
+    this.actions = new Map(); // action -> pending count (presses within one frame are kept)
     this.keySteer = 0;
     this.touch = { steer: 0, gas: false, brake: false, hand: false, boost: false, look: false, left: false, right: false };
     this.touchSteerTarget = 0;
@@ -73,7 +73,7 @@ export class Input {
         if (e.code === 'F3') e.preventDefault();
       }
       if (k) this.keys.add(k);
-      if (a && !e.repeat) this.actions.add(a);
+      if (a && !e.repeat) this._push(a);
     });
     window.addEventListener('keyup', (e) => {
       const k = KEYMAP[e.code];
@@ -204,7 +204,7 @@ export class Input {
       this._buttons.push(el);
       bindButton(el, (on) => {
         if (name === 'camera') {
-          if (on) this.actions.add('camera');
+          if (on) this._push('camera');
         } else this.touch[name] = on;
       });
     });
@@ -380,7 +380,7 @@ export class Input {
       [8, 'reset'],
     ];
     for (const [i, act] of edges) {
-      if (pressed(i) && !gp.prev[i]) this.actions.add(act);
+      if (pressed(i) && !gp.prev[i]) this._push(act);
     }
     // menu navigation (d-pad / stick / A / B)
     if (this.onMenuNav && !this.enabled) {
@@ -405,12 +405,16 @@ export class Input {
   // -------------------------------------------------------------------------
   // Per-frame update
   // -------------------------------------------------------------------------
+  _push(action) {
+    this.actions.set(action, (this.actions.get(action) || 0) + 1);
+  }
+
   consume(action) {
-    if (this.actions.has(action)) {
-      this.actions.delete(action);
-      return true;
-    }
-    return false;
+    const n = this.actions.get(action) || 0;
+    if (n <= 0) return false;
+    if (n === 1) this.actions.delete(action);
+    else this.actions.set(action, n - 1);
+    return true;
   }
 
   clearActions() {

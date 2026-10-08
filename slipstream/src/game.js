@@ -868,7 +868,7 @@ export class Game {
       inp.clearActions();
       return;
     }
-    if (inp.consume('camera')) {
+    while (inp.consume('camera')) {
       const m = this.rig.cycleMode();
       this.settings.cameraMode = m;
       store.save();

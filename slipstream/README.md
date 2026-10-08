@@ -194,7 +194,7 @@ Other useful knobs:
 ## Performance notes
 
 - Pixel ratio is capped at 2 (High), 1.5 (Medium) or 1 (Low). The automatic scaler drops pixel ratio first and then the quality tier when the average frame rate falls below ~47 FPS, and it recovers slowly when there is headroom.
-- Trees, rocks, lamp posts, rail posts, cones and coins use `InstancedMesh`. Track, buildings, houses and billboards are merged. A race scene draws roughly 50–90 draw calls.
+- Trees, rocks, lamp posts, rail posts, cones and coins use `InstancedMesh`. Track, buildings, houses and billboards are merged. Measured: a 6-car race draws about 45–65 draw calls (130k–310k triangles) depending on track and quality, and Free Roam about 20–35.
 - One directional light casts shadows from a small frustum that follows the player (2048² on High, 1024² on Medium, off on Low, where blob shadows remain). Lights glow through additive sprites (fake bloom); there is no post-processing pass.
 - Physics runs at a fixed 60 Hz with an accumulator, and rendering interpolates between steps. Hot paths reuse vectors and typed arrays.
 
